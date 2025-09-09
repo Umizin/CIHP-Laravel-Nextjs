@@ -45,4 +45,8 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function missaos(){
+        return $this->hasMany(Missao::class);
+    }
 }
