@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class MissaoController extends Controller
 {
     /**
-     * Exibe RelatÛrio da Miss„o;
+     * Exibe Relat√≥rio da Miss√£o;
      */
     public function index(){
         $missoes = Missao::all();// Pega tudo que esta salvo
