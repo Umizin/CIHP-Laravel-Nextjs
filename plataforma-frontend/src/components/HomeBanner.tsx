@@ -4,33 +4,28 @@ const montserrat = Montserrat({ subsets: ["latin"], weight: ["300", "400", "500"
 
 export default function HomeBanner() {
   return (
-    
-    <section className="relative w-full h-[400px] md:h-[500px] lg:h-[600px]">
-      
-      {/* Background com imagem */}
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{
-          backgroundImage: "url('https://errejotanoticias.com.br/wp-content/uploads/2024/03/Entrada-de-Marica-1068x712.jpg')",
-        }}
-      >
-        {/* Overlay escuro para contraste */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-transparent" />
-      </div>
+    <section className="relative w-full h-[500px] lg:h-[600px] overflow-hidden">
+      {/* Vídeo de Fundo */}
+      <iframe
+        className="absolute z-0 top-1/2 left-1/2 w-[177.77vh] min-w-[100vw] h-[56.25vw] min-h-[100vh] -translate-x-1/2 -translate-y-1/2"
+        src="https://www.youtube.com/embed/RJ8QsOMgHuw?autoplay=1&mute=1&loop=1&playlist=RJ8QsOMgHuw&controls=0&showinfo=0&autohide=1"
+        frameBorder="0"
+        allow="autoplay; encrypted-media"
+      ></iframe>
 
-      {/* Conteúdo do banner */}
-      <div className="relative z-10 flex flex-col justify-center h-full px-6 md:px-16 lg:px-24 text-white">
+      {/* Overlay e Conteúdo */}
+      <div className="relative z-10 flex flex-col justify-center h-full text-white bg-black/30 px-6 md:px-16 lg:px-24">
         <h1 className={`${montserrat.className} text-5xl md:text-6xl lg:text-8xl font-extrabold drop-shadow-lg`}>
           CIHP
         </h1>
 
-        <ul className={`${montserrat.className} mt-2 space-y-1 text-lg md:text-xl lg:text-1xl font-light`}>
+        <ul className={`${montserrat.className} mt-2 space-y-1 text-lg md:text-xl font-light`}>
           <li>Onde nasce o voluntariado</li>
           <li>E crescem novas oportunidades</li>
         </ul>
 
-        <button className="w-40 h-12 bg-yellow-400 text-black font-semibold rounded-full shadow-lg hover:bg-yellow-500 transition">
-          Quem somos ?
+        <button className="mt-6 w-40 h-12 bg-yellow-400 text-black font-semibold rounded-full shadow-lg hover:bg-yellow-500 transition">
+          Quem somos?
         </button>
       </div>
     </section>
