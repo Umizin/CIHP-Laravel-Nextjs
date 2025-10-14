@@ -1,39 +1,47 @@
 import { Montserrat } from "next/font/google";
+import { MotionValue, motion, useTransform } from "framer-motion";
+import InfoCardsSection from "./InfoCardsSection";
 
 const montserrat = Montserrat({ subsets: ["latin"], weight: ["300", "400", "500", "700"] });
 
-export default function HomeBanner() {
-  return (
-    
-    <section className="relative w-full h-[400px] md:h-[500px] lg:h-[600px]">
-      
-      {/* Background com imagem */}
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{
-          backgroundImage: "url('https://errejotanoticias.com.br/wp-content/uploads/2024/03/Entrada-de-Marica-1068x712.jpg')",
-        }}
-      >
-        {/* Overlay escuro para contraste */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-transparent" />
-      </div>
-
-      {/* Conteúdo do banner */}
-      <div className="relative z-10 flex flex-col justify-center h-full px-6 md:px-16 lg:px-24 text-white">
-        <h1 className={`${montserrat.className} text-5xl md:text-6xl lg:text-8xl font-extrabold drop-shadow-lg`}>
-          CIHP
-        </h1>
-
-        <ul className={`${montserrat.className} mt-2 space-y-1 text-lg md:text-xl lg:text-1xl font-light`}>
-          <li>Onde nasce o voluntariado</li>
-          <li>E crescem novas oportunidades</li>
-        </ul>
-
-        <button className="w-40 h-12 bg-yellow-400 text-black font-semibold rounded-full shadow-lg hover:bg-yellow-500 transition">
-          Quem somos ?
-        </button>
-      </div>
-    </section>
-  );
+interface HomeBannerProps {
+  scrollYProgress: MotionValue<number>;
 }
 
+export default function HomeBanner({ scrollYProgress }: HomeBannerProps) {
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.40, 0.45], [1,1, 0]);
+  return (
+    <div className="h-[400vh]">
+      <motion.section
+        className="sticky top-0 h-screen w-full overflow-hidden"
+        style={{ scale }}
+      >
+        {}
+        <video
+          className="absolute top-0 left-0 w-full h-full object-cover z-0"
+          src="https://www.youtube.com/embed/RJ8QsOMgHuw?autoplay=1&mute=1&loop=1&playlist=RJ8QsOMgHuw&controls=0&showinfo=0&autohide=1" // Caminho para o vídeo na sua pasta /public
+          autoPlay
+          loop
+          muted
+          playsInline
+        />
+
+        <motion.div className="relative z-10 flex flex-col justify-center h-full text-white bg-black/30 px-6 md:px-16 lg:px-24"
+          style={{ opacity:textOpacity }}>
+          <h1 className={`${montserrat.className} text-5xl md:text-6xl lg:text-8xl font-extrabold drop-shadow-lg`}>
+            CIHP
+          </h1>
+          <ul className={`${montserrat.className} mt-2 space-y-1 text-lg md:text-xl font-light`}>
+            <li>Onde nasce o voluntariado</li>
+            <li>E crescem novas oportunidades</li>
+          </ul>
+          <button className="mt-6 w-40 h-12 bg-yellow-400 text-black font-semibold rounded-full shadow-lg hover:bg-yellow-500 transition">
+            Quem somos?
+          </button>
+          <InfoCardsSection scrollYProgress={scrollYProgress}/>
+        </motion.div>
+      </motion.section>
+    </div>
+  );
+}
