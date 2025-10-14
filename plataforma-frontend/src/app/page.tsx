@@ -2,6 +2,7 @@
 import HomeBanner from "@/components/HomeBanner";
 import HomeNavbar from "@/components/HomeNavbar";
 import { useScroll } from "framer-motion";
+import InfoQuemSomos from "../components/InfoQuemSomos"
 
 export default function Home() {
   const { scrollYProgress } = useScroll();
@@ -9,6 +10,7 @@ export default function Home() {
     <>
       <HomeNavbar/>
       <HomeBanner scrollYProgress={scrollYProgress}/>
+      <InfoQuemSomos/>
       <div className="h-[200vh] bg-gray-900 p-8">
         <h2 className="text-white text-4xl font-bold text-center pt-20">
           Seção de Conteúdo Futuro

@@ -9,29 +9,26 @@ interface HomeBannerProps {
 }
 
 export default function HomeBanner({ scrollYProgress }: HomeBannerProps) {
-  // CORREÇÃO: Ajustei o zoom para um valor mais sutil (120%) para evitar o efeito "ridículo".
-  // Você pode ajustar o 1.2 para o valor que desejar.
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
-
+  const textOpacity = useTransform(scrollYProgress, [0, 0.40, 0.45], [1,1, 0]);
   return (
-    // A estrutura do container sticky permanece a mesma.
     <div className="h-[400vh]">
       <motion.section
         className="sticky top-0 h-screen w-full overflow-hidden"
         style={{ scale }}
       >
-        {/* A TÉCNICA CORRETA: a tag <video> nativa com a classe object-cover */}
+        {}
         <video
           className="absolute top-0 left-0 w-full h-full object-cover z-0"
           src="https://www.youtube.com/embed/RJ8QsOMgHuw?autoplay=1&mute=1&loop=1&playlist=RJ8QsOMgHuw&controls=0&showinfo=0&autohide=1" // Caminho para o vídeo na sua pasta /public
           autoPlay
           loop
           muted
-          playsInline // Atributo importante para autoplay em browsers mobile
+          playsInline
         />
 
-        {/* Seu conteúdo de overlay e texto permanece o mesmo */}
-        <div className="relative z-10 flex flex-col justify-center h-full text-white bg-black/30 px-6 md:px-16 lg:px-24">
+        <motion.div className="relative z-10 flex flex-col justify-center h-full text-white bg-black/30 px-6 md:px-16 lg:px-24"
+          style={{ opacity:textOpacity }}>
           <h1 className={`${montserrat.className} text-5xl md:text-6xl lg:text-8xl font-extrabold drop-shadow-lg`}>
             CIHP
           </h1>
@@ -43,7 +40,7 @@ export default function HomeBanner({ scrollYProgress }: HomeBannerProps) {
             Quem somos?
           </button>
           <InfoCardsSection scrollYProgress={scrollYProgress}/>
-        </div>
+        </motion.div>
       </motion.section>
     </div>
   );
