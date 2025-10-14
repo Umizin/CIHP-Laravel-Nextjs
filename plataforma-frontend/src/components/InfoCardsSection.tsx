@@ -5,7 +5,7 @@ interface InfoCardsSectionProps {
 }
 
 export default function InfoCardsSection({ scrollYProgress }: InfoCardsSectionProps) {
-    const opacity = useTransform(scrollYProgress, [0.25, 0.45], [0, 1]);
+    const opacity = useTransform(scrollYProgress, [0.15, 0.35,0.40, 0.45], [0, 1,1, 0]);
     const y = useTransform(scrollYProgress, [0.25, 0.45], [100, 0]);
 
     return (
