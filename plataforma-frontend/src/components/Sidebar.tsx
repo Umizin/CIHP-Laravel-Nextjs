@@ -44,14 +44,20 @@ export default function Sidebar() {
           <div className="flex flex-col flex-grow overflow-y-auto">
             {/* Cabeçalho */}
             <div className="flex items-center gap-2 px-4 py-6 border-b border-gray-700">
-              <User className="text-purple-400" />
-              <h1 className="text-lg font-semibold text-purple-400">CHIP</h1>
+              <Link
+                href="http://localhost:3000/"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2"
+              >
+                <User className="text-purple-400" />
+                <h1 className="text-lg font-semibold text-purple-400 cursor-pointer">CHIP</h1>
+              </Link>
             </div>
 
             {/* Navegação */}
             <nav className="mt-4 flex flex-col space-y-2 px-1">
               <Link
-                href="/perfil"
+                href="http://localhost:3000/perfil/voluntario"
                 className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-md transition"
                 onClick={() => setOpen(false)}
               >
@@ -59,7 +65,7 @@ export default function Sidebar() {
               </Link>
 
               <Link
-                href="/trabalhos"
+                href="http://localhost:3000/trabalhos/voluntarios"
                 className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-md transition"
                 onClick={() => setOpen(false)}
               >
