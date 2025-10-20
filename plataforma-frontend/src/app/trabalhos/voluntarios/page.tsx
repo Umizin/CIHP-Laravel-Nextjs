@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import {
   Leaf,
@@ -11,6 +12,7 @@ import {
   MapPin,
   Clock,
   Search,
+  Trophy,
 } from "lucide-react";
 
 const categorias = [
@@ -26,54 +28,66 @@ const mockTrabalhos = {
     {
       titulo: "Limpeza de praia",
       descricao: "Ação de preservação costeira e conscientização ambiental.",
-      imagem: "https://www.marica.rj.gov.br/wp-content/uploads/2023/09/dsc_6045_53191680024_o-scaled.jpg",
+      imagem:
+        "https://www.marica.rj.gov.br/wp-content/uploads/2023/09/dsc_6045_53191680024_o-scaled.jpg",
       status: "Em andamento",
       duracao: "4h",
       localidade: "Maricá - Ponta Negra",
+      premiada: true,
     },
     {
       titulo: "Entrega de mudas",
       descricao: "Distribuição de mudas para reflorestamento urbano.",
-      imagem: "https://www.sema.ce.gov.br/wp-content/uploads/sites/36/2023/11/EXPOECE23.4.jpeg",
+      imagem:
+        "https://www.sema.ce.gov.br/wp-content/uploads/sites/36/2023/11/EXPOECE23.4.jpeg",
       status: "Concluído",
       duracao: "2h",
       localidade: "Maricá - Itaipuaçu",
+      premiada: false,
     },
     {
       titulo: "Mutirão comunitário",
       descricao: "Apoio a famílias em situação de vulnerabilidade.",
-      imagem: "https://imagens.ebc.com.br/73iIz9HEMqqXlfPMFhrkJb0QCZc=/1170x700/smart/https://agenciabrasil.ebc.com.br/sites/default/files/thumbnails/image/img_7895_0.jpg?itok=y5NyYtoW",
+      imagem:
+        "https://imagens.ebc.com.br/73iIz9HEMqqXlfPMFhrkJb0QCZc=/1170x700/smart/https://agenciabrasil.ebc.com.br/sites/default/files/thumbnails/image/img_7895_0.jpg?itok=y5NyYtoW",
       status: "Concluído",
       duracao: "5h",
       localidade: "Maricá - Centro",
+      premiada: true,
     },
   ],
   "Meio ambiente": [
     {
       titulo: "Limpeza de praia",
       descricao: "Ação de preservação costeira e conscientização ambiental.",
-      imagem: "https://www.marica.rj.gov.br/wp-content/uploads/2023/09/dsc_6045_53191680024_o-scaled.jpg",
+      imagem:
+        "https://www.marica.rj.gov.br/wp-content/uploads/2023/09/dsc_6045_53191680024_o-scaled.jpg",
       status: "Em andamento",
       duracao: "4h",
       localidade: "Maricá - Ponta Negra",
+      premiada: true,
     },
     {
       titulo: "Entrega de mudas",
       descricao: "Distribuição de mudas para reflorestamento urbano.",
-      imagem: "https://www.sema.ce.gov.br/wp-content/uploads/sites/36/2023/11/EXPOECE23.4.jpeg",
+      imagem:
+        "https://www.sema.ce.gov.br/wp-content/uploads/sites/36/2023/11/EXPOECE23.4.jpeg",
       status: "Concluído",
       duracao: "2h",
       localidade: "Maricá - Itaipuaçu",
+      premiada: false,
     },
   ],
   Comunidade: [
     {
       titulo: "Mutirão comunitário",
       descricao: "Apoio a famílias em situação de vulnerabilidade.",
-      imagem: "https://imagens.ebc.com.br/73iIz9HEMqqXlfPMFhrkJb0QCZc=/1170x700/smart/https://agenciabrasil.ebc.com.br/sites/default/files/thumbnails/image/img_7895_0.jpg?itok=y5NyYtoW",
+      imagem:
+        "https://imagens.ebc.com.br/73iIz9HEMqqXlfPMFhrkJb0QCZc=/1170x700/smart/https://agenciabrasil.ebc.com.br/sites/default/files/thumbnails/image/img_7895_0.jpg?itok=y5NyYtoW",
       status: "Concluído",
       duracao: "5h",
       localidade: "Maricá - Centro",
+      premiada: true,
     },
   ],
   Saúde: [],
@@ -82,7 +96,9 @@ const mockTrabalhos = {
 
 export default function TrabalhosPage() {
   const [categoriaAtiva, setCategoriaAtiva] = useState("Todos");
-  const [abaAtiva, setAbaAtiva] = useState<"Todos" | "Em andamento" | "Concluído">("Todos");
+  const [abaAtiva, setAbaAtiva] = useState<
+    "Todos" | "Em andamento" | "Concluído"
+  >("Todos");
   const [carregando, setCarregando] = useState(false);
   const [trabalhos, setTrabalhos] = useState(mockTrabalhos["Todos"]);
   const [busca, setBusca] = useState("");
@@ -101,8 +117,7 @@ export default function TrabalhosPage() {
       const combinaBusca =
         t.titulo.toLowerCase().includes(busca.toLowerCase()) ||
         t.descricao.toLowerCase().includes(busca.toLowerCase());
-      const combinaStatus =
-        abaAtiva === "Todos" ? true : t.status === abaAtiva;
+      const combinaStatus = abaAtiva === "Todos" ? true : t.status === abaAtiva;
       return combinaBusca && combinaStatus;
     });
   }, [busca, abaAtiva, trabalhos]);
@@ -187,9 +202,10 @@ export default function TrabalhosPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {trabalhosFiltrados.map((t, i) => (
-              <div
+              <Link
+                href={`/trabalhos/voluntarios/${i}`}
                 key={i}
-                className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition"
+                className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition cursor-pointer"
               >
                 <img
                   src={t.imagem}
@@ -197,8 +213,11 @@ export default function TrabalhosPage() {
                   className="h-44 w-full object-cover"
                 />
                 <div className="p-4 space-y-2">
-                  <h3 className="text-lg font-semibold text-gray-800">
+                  <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                     {t.titulo}
+                    {t.premiada && (
+                      <Trophy size={20} className="text-yellow-400" title="Vaga Premiada" />
+                    )}
                   </h3>
                   <p className="text-sm text-gray-600">{t.descricao}</p>
 
@@ -225,7 +244,7 @@ export default function TrabalhosPage() {
                     {t.status}
                   </span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
