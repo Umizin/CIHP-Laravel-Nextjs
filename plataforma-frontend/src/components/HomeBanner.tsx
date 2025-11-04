@@ -20,7 +20,7 @@ export default function HomeBanner({ scrollYProgress }: HomeBannerProps) {
         {}
         <video
           className="absolute top-0 left-0 w-full h-full object-cover z-0"
-          src="https://www.youtube.com/embed/RJ8QsOMgHuw?autoplay=1&mute=1&loop=1&playlist=RJ8QsOMgHuw&controls=0&showinfo=0&autohide=1" // Caminho para o vídeo na sua pasta /public
+          src="videos/videohome.webm"
           autoPlay
           loop
           muted

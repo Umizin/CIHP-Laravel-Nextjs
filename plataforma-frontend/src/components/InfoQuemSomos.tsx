@@ -17,20 +17,20 @@ export default function InfoQuemSomosSection() {
         target: containerRef,
         offset: ["start end", "end start"]
     })
-    // Opacity dos itens
-    const scale = useTransform(scrollYProgress, [0, 1], [1, 0.5]);
+    const scale = useTransform(scrollYProgress, [0,0.2, 1], [1.05,1, 0.2]);
     const opacityImg1 = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
-    const opacityImg2 = useTransform(scrollYProgress, [0.15, 0.35], [0, 1]); // Fade in
+    const opacityImg2 = useTransform(scrollYProgress, [0.15, 0.35], [0, 1]);
     const opacityImg3 = useTransform(scrollYProgress, [0.3, 0.5], [0, 1]);
     const opacityImg4 = useTransform(scrollYProgress, [0.45, 0.65], [0, 1]);
     const opacityImg5 = useTransform(scrollYProgress, [0.6, 0.8], [0, 1]);
 
-    const textOpacity = useTransform(scrollYProgress, [0.8, 1], [0, 1]);
-
-  return (
-    // aqui indicamos qual conteiner é a ref.
-    <div ref={containerRef} className="h-[500vh] relative">
+    const opacityVontade = useTransform(scrollYProgress, [0.7, 0.8], [0, 1]);
+    const opacitySeta = useTransform(scrollYProgress, [0.8, 0.9], [0, 1]);
+    const opacityOportunidade = useTransform(scrollYProgress, [0.8, 1.0], [0, 1]);
+return (
+    <div ref={containerRef} className="h-[700vh] relative bg-white">
       <div className="sticky top-0 h-screen">
+        
         <motion.div style={{ scale }} className="relative h-full w-full">
           <ImagemAnimada src={imagens[0]} opacity={opacityImg1} />
           <ImagemAnimada src={imagens[1]} opacity={opacityImg2} />
@@ -39,14 +39,35 @@ export default function InfoQuemSomosSection() {
           <ImagemAnimada src={imagens[4]} opacity={opacityImg5} />
         </motion.div>
 
-        <motion.div 
-            className="absolute inset-0 flex items-center justify-center" 
-            style={{ opacity: textOpacity }}
+        <div 
+            className="absolute inset-0 flex items-start justify-center z-20 pt-24" 
         >
-            <p className="text-white text-4xl md:text-6xl text-center font-bold drop-shadow-lg">
-                Venha fazer a diferença.
-            </p>
-        </motion.div>
+            <div className="flex flex-col md:flex-row items-center justify-cente p-">
+              
+
+              <motion.img 
+                  src="/imagens/vontade.png" 
+                  alt="Onde a vontade"
+                  className="w-auto h-12 md:h-70"
+                  style={{ opacity: opacityVontade }}
+              />
+              
+              <motion.img 
+                  src="/imagens/seta.png" 
+                  alt="seta"
+                  className="w-auto h-8 md:h-70" 
+                  style={{ opacity: opacitySeta }}
+              />
+              
+              <motion.img 
+                  src="/imagens/oportunidade.png"
+                  alt="encontra a oportunidade"
+                  className="w-auto h-12 md:h-70" 
+                  style={{ opacity: opacityOportunidade }}
+              />
+
+            </div>
+        </div>
       </div>
     </div>
   );
