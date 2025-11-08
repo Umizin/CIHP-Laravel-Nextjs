@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import {
@@ -13,6 +13,7 @@ import {
   Clock,
   Search,
   Trophy,
+  Trash2,
 } from "lucide-react";
 
 const categorias = [
@@ -23,104 +24,84 @@ const categorias = [
   { nome: "Reciclagem", icone: Recycle },
 ];
 
-const mockTrabalhos = {
-  Todos: [
-    {
-      titulo: "Limpeza de praia",
-      descricao: "Ação de preservação costeira e conscientização ambiental.",
-      imagem:
-        "https://www.marica.rj.gov.br/wp-content/uploads/2023/09/dsc_6045_53191680024_o-scaled.jpg",
-      status: "Em andamento",
-      duracao: "4h",
-      localidade: "Maricá - Ponta Negra",
-      premiada: true,
-    },
-    {
-      titulo: "Entrega de mudas",
-      descricao: "Distribuição de mudas para reflorestamento urbano.",
-      imagem:
-        "https://www.sema.ce.gov.br/wp-content/uploads/sites/36/2023/11/EXPOECE23.4.jpeg",
-      status: "Concluído",
-      duracao: "2h",
-      localidade: "Maricá - Itaipuaçu",
-      premiada: false,
-    },
-    {
-      titulo: "Mutirão comunitário",
-      descricao: "Apoio a famílias em situação de vulnerabilidade.",
-      imagem:
-        "https://imagens.ebc.com.br/73iIz9HEMqqXlfPMFhrkJb0QCZc=/1170x700/smart/https://agenciabrasil.ebc.com.br/sites/default/files/thumbnails/image/img_7895_0.jpg?itok=y5NyYtoW",
-      status: "Concluído",
-      duracao: "5h",
-      localidade: "Maricá - Centro",
-      premiada: true,
-    },
-  ],
-  "Meio ambiente": [
-    {
-      titulo: "Limpeza de praia",
-      descricao: "Ação de preservação costeira e conscientização ambiental.",
-      imagem:
-        "https://www.marica.rj.gov.br/wp-content/uploads/2023/09/dsc_6045_53191680024_o-scaled.jpg",
-      status: "Em andamento",
-      duracao: "4h",
-      localidade: "Maricá - Ponta Negra",
-      premiada: true,
-    },
-    {
-      titulo: "Entrega de mudas",
-      descricao: "Distribuição de mudas para reflorestamento urbano.",
-      imagem:
-        "https://www.sema.ce.gov.br/wp-content/uploads/sites/36/2023/11/EXPOECE23.4.jpeg",
-      status: "Concluído",
-      duracao: "2h",
-      localidade: "Maricá - Itaipuaçu",
-      premiada: false,
-    },
-  ],
-  Comunidade: [
-    {
-      titulo: "Mutirão comunitário",
-      descricao: "Apoio a famílias em situação de vulnerabilidade.",
-      imagem:
-        "https://imagens.ebc.com.br/73iIz9HEMqqXlfPMFhrkJb0QCZc=/1170x700/smart/https://agenciabrasil.ebc.com.br/sites/default/files/thumbnails/image/img_7895_0.jpg?itok=y5NyYtoW",
-      status: "Concluído",
-      duracao: "5h",
-      localidade: "Maricá - Centro",
-      premiada: true,
-    },
-  ],
-  Saúde: [],
-  Reciclagem: [],
-};
-
 export default function TrabalhosPage() {
   const [categoriaAtiva, setCategoriaAtiva] = useState("Todos");
-  const [abaAtiva, setAbaAtiva] = useState<
-    "Todos" | "Em andamento" | "Concluído"
-  >("Todos");
-  const [carregando, setCarregando] = useState(false);
-  const [trabalhos, setTrabalhos] = useState(mockTrabalhos["Todos"]);
+  const [abaAtiva, setAbaAtiva] = useState<"Todos" | "Em andamento" | "Concluído">("Todos");
   const [busca, setBusca] = useState("");
+  const [trabalhos, setTrabalhos] = useState<any[]>([]);
+  const [carregando, setCarregando] = useState(false);
+  const [pagina, setPagina] = useState(1);
+  const [ultimaPagina, setUltimaPagina] = useState(1);
 
-  const handleCategoriaClick = (categoria: string) => {
+  // 🔹 Buscar vagas
+  const carregarVagas = async (page = 1) => {
     setCarregando(true);
-    setCategoriaAtiva(categoria);
-    setTimeout(() => {
-      setTrabalhos(mockTrabalhos[categoria]);
+    try {
+      const url = new URL("http://localhost/api/vagas");
+      if (busca) url.searchParams.append("search", busca);
+      if (categoriaAtiva !== "Todos") url.searchParams.append("categoria", categoriaAtiva);
+      if (abaAtiva !== "Todos") url.searchParams.append("status", abaAtiva);
+      url.searchParams.append("page", page.toString());
+
+      const res = await fetch(url.toString());
+      const data = await res.json();
+
+      setTrabalhos(data.data);
+      setPagina(data.current_page);
+      setUltimaPagina(data.last_page);
+    } catch (err) {
+      console.error("Erro ao buscar vagas:", err);
+    } finally {
       setCarregando(false);
-    }, 600);
+    }
   };
 
-  const trabalhosFiltrados = useMemo(() => {
-    return trabalhos.filter((t) => {
-      const combinaBusca =
-        t.titulo.toLowerCase().includes(busca.toLowerCase()) ||
-        t.descricao.toLowerCase().includes(busca.toLowerCase());
-      const combinaStatus = abaAtiva === "Todos" ? true : t.status === abaAtiva;
-      return combinaBusca && combinaStatus;
-    });
-  }, [busca, abaAtiva, trabalhos]);
+  useEffect(() => {
+    carregarVagas(1);
+  }, [categoriaAtiva, abaAtiva, busca]);
+
+  const handleCategoriaClick = (categoria: string) => {
+    setCategoriaAtiva(categoria);
+  };
+
+  // 🗑️ Função de exclusão com confirmação de senha
+  const handleDelete = async (id: number) => {
+    const senha = prompt("Para confirmar a exclusão, digite sua senha:");
+    if (!senha) return;
+
+    const tokenData = sessionStorage.getItem("token");
+    if (!tokenData) {
+      alert("Você precisa estar logado para deletar uma vaga.");
+      return;
+    }
+
+    const { token } = JSON.parse(tokenData);
+
+    try {
+      const res = await fetch(`http://localhost/api/vagas/${id}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password: senha }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || "Erro ao excluir vaga.");
+        return;
+      }
+
+      alert("Vaga excluída com sucesso!");
+      carregarVagas();
+    } catch (error) {
+      console.error(error);
+      alert("Erro na exclusão da vaga.");
+    }
+  };
 
   const renderSkeleton = () => (
     <div className="animate-pulse grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -152,9 +133,8 @@ export default function TrabalhosPage() {
           ))}
         </div>
 
-        {/* 🔹 Abas de status + barra de pesquisa */}
+        {/* 🔹 Abas + Pesquisa */}
         <div className="flex flex-wrap items-center justify-between gap-6 mb-8 border-b border-gray-300 pb-2">
-          {/* Abas */}
           <div className="flex items-center gap-8 text-sm font-medium relative">
             {["Todos", "Em andamento", "Concluído"].map((aba) => (
               <button
@@ -171,7 +151,6 @@ export default function TrabalhosPage() {
             ))}
           </div>
 
-          {/* Barra de pesquisa */}
           <div className="relative max-w-md w-full">
             <Search
               size={18}
@@ -179,7 +158,7 @@ export default function TrabalhosPage() {
             />
             <input
               type="text"
-              placeholder="Buscar trabalho..."
+              placeholder="Buscar vaga..."
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
               className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
@@ -187,31 +166,26 @@ export default function TrabalhosPage() {
           </div>
         </div>
 
-        {/* 🔹 Título */}
-        <h1 className="text-xl font-semibold text-gray-800 mb-6">
-          Trabalhos — {categoriaAtiva}
-        </h1>
-
         {/* 🔹 Lista de trabalhos */}
         {carregando ? (
           renderSkeleton()
-        ) : trabalhosFiltrados.length === 0 ? (
-          <p className="text-gray-500">
-            Nenhum trabalho encontrado com os filtros aplicados.
-          </p>
+        ) : trabalhos.length === 0 ? (
+          <p className="text-gray-500">Nenhuma vaga encontrada.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {trabalhosFiltrados.map((t, i) => (
-              <Link
-                href={`/trabalhos/voluntarios/${i}`}
-                key={i}
-                className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition cursor-pointer"
+            {trabalhos.map((t) => (
+              <div
+                key={t.id}
+                className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition"
               >
-                <img
-                  src={t.imagem}
-                  alt={t.titulo}
-                  className="h-44 w-full object-cover"
-                />
+                <Link href={`/trabalhos/voluntarios/${t.id}`}>
+                  <img
+                    src={`http://localhost/storage/${t.imagem}`}
+                    alt={t.titulo}
+                    className="h-44 w-full object-cover"
+                  />
+                </Link>
+
                 <div className="p-4 space-y-2">
                   <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                     {t.titulo}
@@ -221,19 +195,17 @@ export default function TrabalhosPage() {
                   </h3>
                   <p className="text-sm text-gray-600">{t.descricao}</p>
 
-                  {/* Local e duração */}
                   <div className="flex items-center justify-between text-sm text-gray-500 pt-1">
                     <span className="flex items-center gap-1">
                       <MapPin size={14} className="text-purple-500" />
-                      {t.localidade}
+                      {t.cidade} - {t.bairro}
                     </span>
                     <span className="flex items-center gap-1">
                       <Clock size={14} className="text-purple-500" />
-                      {t.duracao}
+                      {t.duracao || "Não informado"}
                     </span>
                   </div>
 
-                  {/* Status */}
                   <span
                     className={`inline-block mt-2 text-xs px-2 py-1 rounded-full ${
                       t.status === "Em andamento"
@@ -243,8 +215,25 @@ export default function TrabalhosPage() {
                   >
                     {t.status}
                   </span>
+
+                  {/* 🔹 Botões de ação */}
+                  <div className="pt-3 flex gap-3">
+                    <Link
+                      href={`/trabalhos/ONGS/edit/${t.id}`}
+                      className="flex-1 text-center text-sm text-white bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg transition"
+                    >
+                      Editar
+                    </Link>
+                    <button
+                      onClick={() => handleDelete(t.id)}
+                      className="flex items-center justify-center flex-1 gap-1 text-sm text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition"
+                    >
+                      <Trash2 size={16} />
+                      Excluir
+                    </button>
+                  </div>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         )}
