@@ -9,6 +9,7 @@ use App\Http\Controllers\VoluntarioController;
 use App\Http\Controllers\EmpresaRegisterController;
 use App\Http\Controllers\OngRegisterController;
 use App\Http\Controllers\VagaController;
+use App\Http\Controllers\InscricaoController;
 
 /**
  * Aqui vão ficar as rotas do acesso da API
@@ -29,7 +30,12 @@ Route::post('/login', function (Request $request) {
     }
 
     return response()->json([
-        'token' => $user->createToken('apiToken')->plainTextToken
+        'token' => $user->createToken('apiToken')->plainTextToken,
+        'user' => [
+            'id' => $user->id,
+            'name' => $user->name,
+            'type' => $user->type,
+        ]
     ]);
 });
 
@@ -44,7 +50,7 @@ Route::post('/login/empresa', function(Request $request){
             ->where('type', 'empresa')
             ->first();
 
-        if (!$usuario || !Hash::check($request->senha, $usuario->senha_hash)) {
+        if (!$usuario || !Hash::check($request->password, $usuario->password)) {
             return response()->json(['message' => 'Credenciais inválidas.'], 401);
         }
 
@@ -53,6 +59,11 @@ Route::post('/login/empresa', function(Request $request){
         return response()->json([
             'message' => 'Login realizado com sucesso.',
             'token' => $token,
+            'user' => [
+            'id' => $usuario->id,
+            'name' => $usuario->name,
+            'type' => $usuario->type,
+        ]
         ]);
 
 });
@@ -76,6 +87,11 @@ Route::post('/login/ong', function(Request $request){
         return response()->json([
             'message' => 'Login realizado com sucesso.',
             'token' => $token,
+            'user' => [
+            'id' => $usuario->id,
+            'name' => $usuario->name,
+            'type' => $usuario->type,
+        ]
         ]);
 
 });
@@ -90,6 +106,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/vagas', [VagaController::class, 'store']);      // Criar vaga
     Route::put('/vagas/{id}', [VagaController::class, 'update']); // Editar
     Route::delete('/vagas/{id}', [VagaController::class, 'destroy']); // Excluir
+    Route::get('/ong/vagas', [VagaController::class, 'listarPorOng']);
+    Route::post('/inscricoes', [InscricaoController::class, 'store']);
+    Route::get('/inscricoes/minhas', [InscricaoController::class, 'minhasInscricoes']);
+    Route::delete('/inscricoes/{vaga_id}', [App\Http\Controllers\InscricaoController::class, 'cancelarInscricao']);
 });
 
 Route::get('/vagas', [VagaController::class, 'index']); // Listar (pública)
