@@ -13,7 +13,6 @@ import {
   Clock,
   Search,
   Trophy,
-  Trash2,
 } from "lucide-react";
 
 const categorias = [
@@ -62,45 +61,6 @@ export default function TrabalhosPage() {
 
   const handleCategoriaClick = (categoria: string) => {
     setCategoriaAtiva(categoria);
-  };
-
-  // 🗑️ Função de exclusão com confirmação de senha
-  const handleDelete = async (id: number) => {
-    const senha = prompt("Para confirmar a exclusão, digite sua senha:");
-    if (!senha) return;
-
-    const tokenData = sessionStorage.getItem("token");
-    if (!tokenData) {
-      alert("Você precisa estar logado para deletar uma vaga.");
-      return;
-    }
-
-    const { token } = JSON.parse(tokenData);
-
-    try {
-      const res = await fetch(`http://localhost/api/vagas/${id}`, {
-        method: "DELETE",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ password: senha }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.error || "Erro ao excluir vaga.");
-        return;
-      }
-
-      alert("Vaga excluída com sucesso!");
-      carregarVagas();
-    } catch (error) {
-      console.error(error);
-      alert("Erro na exclusão da vaga.");
-    }
   };
 
   const renderSkeleton = () => (
@@ -215,23 +175,6 @@ export default function TrabalhosPage() {
                   >
                     {t.status}
                   </span>
-
-                  {/* 🔹 Botões de ação */}
-                  <div className="pt-3 flex gap-3">
-                    <Link
-                      href={`/trabalhos/ONGS/edit/${t.id}`}
-                      className="flex-1 text-center text-sm text-white bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg transition"
-                    >
-                      Editar
-                    </Link>
-                    <button
-                      onClick={() => handleDelete(t.id)}
-                      className="flex items-center justify-center flex-1 gap-1 text-sm text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition"
-                    >
-                      <Trash2 size={16} />
-                      Excluir
-                    </button>
-                  </div>
                 </div>
               </div>
             ))}
