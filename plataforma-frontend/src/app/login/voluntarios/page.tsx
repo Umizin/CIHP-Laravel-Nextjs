@@ -27,8 +27,10 @@ export default function LoginVoluntario() {
         throw new Error(data.message || "Erro ao efetuar login");
       }
 
-      const token = await response.text();
-      localStorage.setItem("token", token);
+      const data = await response.json();
+      sessionStorage.setItem("token", data.token);
+
+      sessionStorage.setItem("user", JSON.stringify({user: data.user}));
       window.location.href = "/perfil/voluntario";
     } catch (err: any) {
       setError(err.message);
@@ -103,7 +105,7 @@ export default function LoginVoluntario() {
           <p className="text-sm text-center text-gray-600 mt-2">
             Ainda não tem conta?{" "}
             <Link
-              href="/cadastro/voluntario"
+              href="../../cadastro/voluntarios"
               className="text-yellow-500 hover:underline"
             >
               Cadastre-se aqui!

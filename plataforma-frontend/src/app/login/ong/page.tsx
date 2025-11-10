@@ -24,7 +24,10 @@ export default function LoginOng() {
       if (!response.ok) throw new Error(data.message || "Falha ao realizar login.");
 
       sessionStorage.setItem("token", data.token);
-      // window.location.href = "/ong/dashboard";
+      sessionStorage.setItem("user", JSON.stringify({user: data.user}));
+
+      alert('Login realizado com sucesso!')
+      window.location.href = "../../perfil/ong/";
     } catch (error: any) {
       setErro(error.message || "Erro ao conectar com o servidor.");
     }
