@@ -14,16 +14,17 @@ export default function LoginEmpresa() {
     setErro("");
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/empresa/login", {
+      const response = await fetch("http://localhost/api/login/empresa", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, senha }),
+        body: JSON.stringify({ email, password: senha }),
       });
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Falha ao realizar login.");
 
       sessionStorage.setItem("token", data.token);
+      sessionStorage.setItem("user", JSON.stringify({user: data.user}));
       window.location.href = "/empresa/dashboard";
     } catch (error: any) {
       setErro(error.message || "Erro ao conectar com o servidor.");
