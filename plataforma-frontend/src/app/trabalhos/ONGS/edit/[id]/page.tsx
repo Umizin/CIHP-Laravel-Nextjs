@@ -118,7 +118,7 @@ export default function EditarVagaPage() {
       if (!res.ok) throw new Error(data.error || "Erro ao atualizar vaga");
 
       alert("Vaga atualizada com sucesso!");
-      router.push("/trabalhos/voluntarios");
+      router.push("/trabalhos/ONGS/vagas");
     } catch (err: any) {
       console.error(err);
       alert(err.message || "Erro ao atualizar vaga");
