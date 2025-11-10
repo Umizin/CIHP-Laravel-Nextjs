@@ -19,28 +19,26 @@ class VoluntarioController extends Controller
             'cpf' => 'nullable|string|unique:users,cpf',
             'data_nascimento' => 'nullable|date',
             'address' => 'nullable|string|max:255',
+            'cidade' => 'required|string|max:255',
+            'estado' => 'required|string|max:255',
         ]);
 
         $user = User::create([
     'name' => $validated['name'],
     'email' => $validated['email'],
+    'type' => 'voluntario',
     'password' => Hash::make($validated['password']), // hash correto
-    'telefone' => $validated['phone'] ?? null,
+    'telefone' => $validated['telefone'] ?? null,
     'cpf' => $validated['cpf'] ?? null,
-    'data_nascimento' => $validated['birthdate'] ?? null,
+    'data_nascimento' => $validated['data_nascimento'] ?? null,
     'address' => $validated['address'] ?? null,
-    'cidade' => $validated['city'] ?? null,
-    'estado' => $validated['state'] ?? null,
+    'cidade' => $validated['cidade'] ?? null,
+    'estado' => $validated['estado'] ?? null,
 ]);
 
 
-        // opcional: gerar token para autenticação API
-        $token = $user->createToken('voluntario-token')->plainTextToken;
-
         return response()->json([
             'message' => 'Cadastro realizado com sucesso',
-            'user' => $user,
-            'token' => $token,
         ], 201);
     }
 }
