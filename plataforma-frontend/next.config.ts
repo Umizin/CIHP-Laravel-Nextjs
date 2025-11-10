@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
       "www.sema.ce.gov.br",
       "imagens.ebc.com.br",
       "agenciabrasil.ebc.com.br",
+      'images.unsplash.com',
+      'localhost'
     ],
   },
 };
