@@ -129,4 +129,22 @@ class VagaController extends Controller
         return response()->json(['message' => 'Vaga excluída com sucesso.']);
     }
 
+    public function listarPorOng(Request $request)
+{
+    $user = $request->user();
+
+    // Verifica se o usuário é realmente uma ONG
+    if ($user->type !== 'ong') {
+        return response()->json(['error' => 'Acesso negado. Apenas ONGs podem listar suas vagas.'], 403);
+    }
+
+    // Busca todas as vagas publicadas por essa ONG
+    $vagas = \App\Models\Vaga::where('ong_id', $user->id)
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+    return response()->json($vagas);
+}
+
+
 }
