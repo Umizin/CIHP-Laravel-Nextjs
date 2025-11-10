@@ -24,12 +24,11 @@ class User extends Authenticatable
         'company_name',
         'email',
         'password',
-        'telefone',
         'type',
         'cnpj',
         'responsavel',
-        'data_nascimento',
         'descricao',
+        'address',
         'cidade',
         'estado'
     ];
