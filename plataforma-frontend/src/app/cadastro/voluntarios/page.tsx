@@ -9,10 +9,10 @@ export default function CadastroVoluntarioPage() {
     email: "",
     password: "",
     password_confirmation: "",
-    phone: "",
-    birthdate: "",
-    city: "",
-    state: "",
+    telefone: "",
+    data_nascimento: "",
+    cidade: "",
+    estado: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -34,6 +34,7 @@ export default function CadastroVoluntarioPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          
         },
         body: JSON.stringify(formData),
       });
@@ -49,10 +50,10 @@ export default function CadastroVoluntarioPage() {
           email: "",
           password: "",
           password_confirmation: "",
-          phone: "",
-          birthdate: "",
-          city: "",
-          state: "",
+          telefone: "",
+          data_nascimento: "",
+          cidade: "",
+          estado: "",
         });
       }
     } catch (err) {
@@ -125,31 +126,31 @@ export default function CadastroVoluntarioPage() {
           />
           <input
             type="tel"
-            name="phone"
-            value={formData.phone}
+            name="telefone"
+            value={formData.telefone}
             onChange={handleChange}
             placeholder="Telefone (DDD + número)"
             className="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-800 placeholder-gray-500 focus:ring-2 focus:ring-yellow-400 outline-none"
           />
           <input
             type="date"
-            name="birthdate"
-            value={formData.birthdate}
+            name="data_nascimento"
+            value={formData.data_nascimento}
             onChange={handleChange}
             className="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-800 placeholder-gray-500 focus:ring-2 focus:ring-yellow-400 outline-none"
           />
           <input
             type="text"
-            name="city"
-            value={formData.city}
+            name="cidade"
+            value={formData.cidade}
             onChange={handleChange}
             placeholder="Cidade"
             className="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-800 placeholder-gray-500 focus:ring-2 focus:ring-yellow-400 outline-none"
           />
           <input
             type="text"
-            name="state"
-            value={formData.state}
+            name="estado"
+            value={formData.estado}
             onChange={handleChange}
             placeholder="Estado"
             className="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-800 placeholder-gray-500 focus:ring-2 focus:ring-yellow-400 outline-none"
