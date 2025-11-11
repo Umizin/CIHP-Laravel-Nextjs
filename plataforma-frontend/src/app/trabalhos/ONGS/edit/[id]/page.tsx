@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState, useEffect, ChangeEvent } from "react";
@@ -24,6 +25,7 @@ export default function EditarVagaPage() {
   const vagaId = params.id;
 
   const [loading, setLoading] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [formData, setFormData] = useState<any>({
     titulo: "",
     descricao: "",
@@ -73,6 +75,7 @@ export default function EditarVagaPage() {
   // 🔹 Atualizar campos do formulário
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setFormData((prev: any) => ({ ...prev, [name]: value }));
   };
 

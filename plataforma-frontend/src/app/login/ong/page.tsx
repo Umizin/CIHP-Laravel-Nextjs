@@ -28,8 +28,12 @@ export default function LoginOng() {
 
       alert('Login realizado com sucesso!')
       window.location.href = "../../perfil/ong/";
-    } catch (error: any) {
-      setErro(error.message || "Erro ao conectar com o servidor.");
+    } catch (error: unknown) {
+      let mensagem = "Erro ao conectar com o servidor.";
+      if (error instanceof Error) {
+        mensagem = error.message;
+      }
+      setErro(mensagem);
     }
   };
 
