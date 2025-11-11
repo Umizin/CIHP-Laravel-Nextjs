@@ -1,10 +1,11 @@
 "use client";
 import AuthLayout from "@/layouts/AuthLayout";
 import Link from "next/link";
+import {User} from 'lucide-react';
 
 export default function Login() {
   return (
-    <AuthLayout>
+    <AuthLayout Icon={User}>
     <form className="flex flex-col gap-4">
       <input
         type="text"
@@ -35,6 +36,10 @@ export default function Login() {
         </Link>
       </p>
     </form>
+    <script>
+      
+
+    </script>
     </AuthLayout>
   );
 }
