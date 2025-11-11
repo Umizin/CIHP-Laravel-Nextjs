@@ -1,8 +1,10 @@
 "use client";
-import HomeBanner from "@/components/HomeBanner";
-import HomeNavbar from "@/components/HomeNavbar";
+import HomeBanner from "@/components/home/HomeBanner";
+import HomeNavbar from "@/components/home/HomeNavbar";
 import { useScroll } from "framer-motion";
-import InfoQuemSomos from "../components/InfoQuemSomos"
+import InfoQuemSomos from "../components/home/InfoQuemSomos";
+import VagasSection from "../components/home/VagasSection";
+import Footer from "../app/footer";
 
 export default function Home() {
   const { scrollYProgress } = useScroll();
@@ -11,14 +13,8 @@ export default function Home() {
       <HomeNavbar/>
       <HomeBanner scrollYProgress={scrollYProgress}/>
       <InfoQuemSomos/>
-      <div className="h-[200vh] bg-gray-900 p-8">
-        <h2 className="text-white text-4xl font-bold text-center pt-20">
-          Seção de Conteúdo Futuro
-        </h2>
-        <p className="text-gray-400 mt-4 text-center">
-          Este espaço será preenchido com os cartões de missão e outras seções da sua landing page.
-        </p>
-      </div>
+      <VagasSection />
+      <Footer />
     </>
   );
 }

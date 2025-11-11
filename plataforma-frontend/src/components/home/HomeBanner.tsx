@@ -10,7 +10,7 @@ interface HomeBannerProps {
 
 export default function HomeBanner({ scrollYProgress }: HomeBannerProps) {
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
-  const textOpacity = useTransform(scrollYProgress, [0, 0.40, 0.45], [1,1, 0]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.30, 0.45], [1,1, 0]);
   return (
     <div className="h-[400vh]">
       <motion.section
@@ -40,6 +40,21 @@ export default function HomeBanner({ scrollYProgress }: HomeBannerProps) {
             Quem somos?
           </button>
           <InfoCardsSection scrollYProgress={scrollYProgress}/>
+          <motion.div
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center"
+            style={{ opacity: textOpacity }} 
+            animate={{ y: [0, 10, 0] }}
+            transition={{ 
+              duration: 1.5, 
+              repeat: Infinity, 
+              repeatType: "loop" 
+            }}
+          >
+            <p className={`text-sm ${montserrat.className}`}>Role para uma experiência</p>
+            <span className="material-symbols-outlined">
+              arrow_downward
+            </span>
+          </motion.div>
         </motion.div>
       </motion.section>
     </div>
