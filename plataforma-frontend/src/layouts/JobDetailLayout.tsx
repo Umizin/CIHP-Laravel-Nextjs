@@ -9,6 +9,7 @@ interface JobDetailLayoutProps {
   children: ReactNode;
   titulo: string;
   descricao: string;
+  descricaoDetalhada?: string; // <-- "FORMA" ADICIONADA AQUI (O '?' a torna opcional)
   imagem: string;
   status: string;
   duracao: string;
@@ -19,6 +20,7 @@ export default function JobDetailLayout({
   children,
   titulo,
   descricao,
+  descricaoDetalhada, // <-- "FORMA" 2: ENSINE A NOVA ORDEM AO "SOLDADO"
   imagem,
   status,
   duracao,
