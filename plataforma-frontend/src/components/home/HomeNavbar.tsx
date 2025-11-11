@@ -33,9 +33,9 @@ export default function HomeNavbar() {
 
         <div className="flex flex-row gap-3 items-center">
           <ul className="flex flex-row gap-2 ">
-            <Link href='/login' ><li className="cursor-pointer hover:text-[#683bab]">Login</li></Link>
+            <Link href='/login/voluntarios' ><li className="cursor-pointer hover:text-[#683bab]">Login</li></Link>
             <span>/</span>
-            <Link href='/cadastro' ><li className="cursor-pointer hover:text-[#683bab]">Cadastro</li></Link>
+            <Link href='/cadastro/voluntarios' ><li className="cursor-pointer hover:text-[#683bab]">Cadastro</li></Link>
           </ul>
           <span className="material-symbols-outlined cursor-pointer ">
             account_circle
