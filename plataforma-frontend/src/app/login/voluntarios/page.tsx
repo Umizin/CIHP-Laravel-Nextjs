@@ -32,8 +32,12 @@ export default function LoginVoluntario() {
 
       sessionStorage.setItem("user", JSON.stringify({user: data.user}));
       window.location.href = "/perfil/voluntario";
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError(String(err));
+      }
     } finally {
       setLoading(false);
     }

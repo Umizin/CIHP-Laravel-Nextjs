@@ -56,7 +56,8 @@ export default function CadastroVoluntarioPage() {
           estado: "",
         });
       }
-    } catch (err) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_err) {
       setError("Erro de conexão com o servidor.");
     }
 

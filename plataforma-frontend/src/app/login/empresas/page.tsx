@@ -26,8 +26,14 @@ export default function LoginEmpresa() {
       sessionStorage.setItem("token", data.token);
       sessionStorage.setItem("user", JSON.stringify({user: data.user}));
       window.location.href = "/empresa/dashboard";
-    } catch (error: any) {
-      setErro(error.message || "Erro ao conectar com o servidor.");
+    } catch (error: unknown) {
+      let message = "Erro ao conectar com o servidor.";
+      if (error instanceof Error) {
+        message = error.message;
+      } else if (typeof error === "string") {
+        message = error;
+      }
+      setErro(message);
     }
   };
 
