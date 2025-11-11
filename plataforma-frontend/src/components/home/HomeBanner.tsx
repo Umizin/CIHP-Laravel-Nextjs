@@ -18,6 +18,7 @@ export default function HomeBanner({ scrollYProgress }: HomeBannerProps) {
         style={{ scale }}
       >
         {}
+        {}
         <video
           className="absolute top-0 left-0 w-full h-full object-cover z-0"
           src="videos/videohome.webm"
@@ -25,8 +26,11 @@ export default function HomeBanner({ scrollYProgress }: HomeBannerProps) {
           loop
           muted
           playsInline
+          playsInline
         />
 
+        <motion.div className="relative z-10 flex flex-col justify-center h-full text-white bg-black/30 px-6 md:px-16 lg:px-24"
+          style={{ opacity:textOpacity }}>
         <motion.div className="relative z-10 flex flex-col justify-center h-full text-white bg-black/30 px-6 md:px-16 lg:px-24"
           style={{ opacity:textOpacity }}>
           <h1 className={`${montserrat.className} text-5xl md:text-6xl lg:text-8xl font-extrabold drop-shadow-lg`}>

@@ -1,91 +1,248 @@
-// src/app/trabalhos/voluntarios/[id]/page.tsx
+"use client";
+export const dynamic = "force-dynamic";
 
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import JobDetailLayout from "@/layouts/JobDetailLayout";
+import { Loader2, CheckCircle, XCircle } from "lucide-react";
 
-// 🔁 Mock temporário (substitua futuramente por chamada API)
-const mockTrabalhos = [
-  {
-    titulo: "Limpeza de praia",
-    descricao: "Ação de preservação costeira e conscientização ambiental.",
-    descricaoDetalhada:
-      "Participe do mutirão para limpar a orla da praia, removendo lixo e conscientizando os banhistas sobre a importância da preservação ambiental. O trabalho contribui diretamente para a conservação do ecossistema marinho e promove educação ambiental para a comunidade local.",
-    imagem:
-      "https://www.marica.rj.gov.br/wp-content/uploads/2023/09/dsc_6045_53191680024_o-scaled.jpg",
-    status: "Em andamento",
-    duracao: "4h",
-    localidade: "Maricá - Ponta Negra",
-    vagas: 20,
-    inscritos: 14,
-    premiado: true,
-    descricaoPremio:
-      "Desconto de 20% em eventos parceiros e camiseta exclusiva do projeto.",
-  },
-  {
-    titulo: "Entrega de mudas",
-    descricao: "Distribuição de mudas para reflorestamento urbano.",
-    descricaoDetalhada:
-      "Esta ação visa distribuir mudas de árvores nativas para moradores e escolas da região, incentivando o plantio e o cuidado com as áreas verdes urbanas. A iniciativa ajuda a melhorar a qualidade do ar e aumenta a biodiversidade local.",
-    imagem:
-      "https://www.sema.ce.gov.br/wp-content/uploads/sites/36/2023/11/EXPOECE23.4.jpeg",
-    status: "Concluído",
-    duracao: "2h",
-    localidade: "Maricá - Itaipuaçu",
-    vagas: 15,
-    inscritos: 15,
-    premiado: false,
-  },
-  {
-    titulo: "Mutirão comunitário",
-    descricao: "Apoio a famílias em situação de vulnerabilidade.",
-    descricaoDetalhada:
-      "Voluntários ajudarão na organização e distribuição de alimentos, roupas e itens de higiene para famílias em vulnerabilidade social. Além disso, haverá atividades de integração e suporte psicológico.",
-    imagem:
-      "https://imagens.ebc.com.br/73iIz9HEMqqXlfPMFhrkJb0QCZc=/1170x700/smart/https://agenciabrasil.ebc.com.br/sites/default/files/thumbnails/image/img_7895_0.jpg?itok=y5NyYtoW",
-    status: "Concluído",
-    duracao: "5h",
-    localidade: "Maricá - Centro",
-    vagas: 25,
-    inscritos: 22,
-    premiado: true,
-    descricaoPremio:
-      "Certificado oficial de voluntariado e convite para evento de networking.",
-  },
-];
+interface Vaga {
+  id: number;
+  titulo: string;
+  descricao: string;
+  descricao_detalhada?: string;
+  imagem?: string;
+  status?: string;
+  duracao?: string;
+  cidade?: string;
+  bairro?: string;
+  vagas_disponiveis?: number;
+  ong?: {
+    id: number;
+    name: string;
+  };
+}
 
-export default function JobDetailPage({ params }: { params: { id: string } }) {
-  const trabalho = mockTrabalhos[Number(params.id)];
+export default function JobDetailPage() {
+  const { id } = useParams();
+  const [vaga, setVaga] = useState<Vaga | null>(null);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState<string | null>(null);
+  const [processando, setProcessando] = useState(false);
+  const [inscrito, setInscrito] = useState(false);
+  const [mensagem, setMensagem] = useState<string | null>(null);
 
-  if (!trabalho) {
+  // 🔹 Busca a vaga e verifica se o usuário está inscrito
+  useEffect(() => {
+    const carregarVaga = async () => {
+      try {
+        const res = await fetch(`http://localhost/api/vagas/${id}`);
+        if (!res.ok) throw new Error("Erro ao buscar vaga.");
+        const data = await res.json();
+        setVaga(data);
+      } catch (error: any) {
+        setErro(error.message);
+      } finally {
+        setCarregando(false);
+      }
+    };
+
+    const verificarInscricao = async () => {
+      try {
+        const tokenRaw = sessionStorage.getItem("token");
+        if (!tokenRaw) return;
+
+        const token = tokenRaw.startsWith("{")
+          ? JSON.parse(tokenRaw).token
+          : tokenRaw;
+
+        const res = await fetch(`http://localhost/api/inscricoes/minhas`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const inscritoNaVaga = data.data?.some(
+            (i: any) => i.vaga.id === Number(id)
+          );
+          setInscrito(inscritoNaVaga);
+        }
+      } catch (e) {
+        console.error("Erro ao verificar inscrição:", e);
+      }
+    };
+
+    if (id) {
+      carregarVaga();
+      verificarInscricao();
+    }
+  }, [id]);
+
+  // 🔹 Função: inscrever-se na vaga
+  const inscreverNaVaga = async () => {
+    try {
+      setProcessando(true);
+      setMensagem(null);
+
+      const raw = sessionStorage.getItem("token");
+      if (!raw) throw new Error("Token não encontrado");
+
+      const token = raw.startsWith("{") ? JSON.parse(raw).token : raw;
+
+      const res = await fetch(`http://localhost/api/inscricoes`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ vaga_id: id }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erro ao se inscrever.");
+
+      setInscrito(true);
+      setMensagem("Inscrição realizada com sucesso!");
+    } catch (error: any) {
+      setMensagem(error.message);
+    } finally {
+      setProcessando(false);
+    }
+  };
+
+  // 🔹 Função: cancelar inscrição
+  const cancelarInscricao = async () => {
+    try {
+      setProcessando(true);
+      setMensagem(null);
+
+      const raw = sessionStorage.getItem("token");
+      if (!raw) throw new Error("Token não encontrado");
+
+      const token = raw.startsWith("{") ? JSON.parse(raw).token : raw;
+
+      const res = await fetch(
+        `http://localhost/api/inscricoes/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erro ao cancelar inscrição.");
+
+      setInscrito(false);
+      setMensagem("Inscrição cancelada com sucesso!");
+    } catch (error: any) {
+      setMensagem(error.message);
+    } finally {
+      setProcessando(false);
+    }
+  };
+
+  // 🔹 Estado: carregando
+  if (carregando) {
     return (
       <DashboardLayout>
-        <div className="text-center text-gray-600 mt-20">
-          Trabalho não encontrado.
+        <div className="text-center text-gray-600 mt-20 animate-pulse">
+          Carregando vaga...
         </div>
       </DashboardLayout>
     );
   }
 
+  // 🔹 Estado: erro
+  if (erro || !vaga) {
+    return (
+      <DashboardLayout>
+        <div className="text-center text-gray-600 mt-20">
+          {erro || "Vaga não encontrada."}
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  const imagemUrl = vaga.imagem
+    ? `http://localhost/storage/${vaga.imagem}`
+    : "https://via.placeholder.com/800x400?text=Imagem+da+Vaga";
+
   return (
     <DashboardLayout>
-      <JobDetailLayout {...trabalho}>
+      <JobDetailLayout
+        titulo={vaga.titulo}
+        descricao={vaga.descricao}
+        descricaoDetalhada={vaga.descricao_detalhada}
+        imagem={imagemUrl}
+        status={vaga.status || "Em andamento"}
+        duracao={vaga.duracao || "Não informada"}
+        localidade={`${vaga.cidade || ""} - ${vaga.bairro || ""}`}
+        vagas={vaga.vagas_disponiveis || 0}
+        inscritos={0}
+        premiado={false}
+      >
         <div className="space-y-4 text-gray-700 leading-relaxed">
-          <p>{trabalho.descricaoDetalhada}</p>
+          <p>{vaga.descricao_detalhada}</p>
+
           <div className="flex gap-6 text-sm">
             <div>
-              <strong>Vagas disponíveis:</strong> {trabalho.vagas}
+              <strong>Vagas disponíveis:</strong> {vaga.vagas_disponiveis || 0}
             </div>
             <div>
-              <strong>Pessoas inscritas:</strong> {trabalho.inscritos}
+              <strong>Responsável:</strong> {vaga.ong?.name || "ONG não identificada"}
             </div>
           </div>
 
-          {trabalho.premiado && trabalho.descricaoPremio && (
-            <div className="mt-4 p-4 border-l-4 border-yellow-400 bg-yellow-50 rounded">
-              <h3 className="font-semibold text-yellow-700 mb-1">Prêmio da vaga</h3>
-              <p className="text-yellow-800">{trabalho.descricaoPremio}</p>
-            </div>
-          )}
+          {/* 🔹 Botão dinâmico */}
+          <div className="mt-6">
+            {!inscrito ? (
+              <button
+                onClick={inscreverNaVaga}
+                disabled={processando}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg flex items-center gap-2 transition disabled:opacity-60"
+              >
+                {processando ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" /> Inscrevendo...
+                  </>
+                ) : (
+                  "Inscrever-se na vaga"
+                )}
+              </button>
+            ) : (
+              <button
+                onClick={cancelarInscricao}
+                disabled={processando}
+                className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg flex items-center gap-2 transition disabled:opacity-60"
+              >
+                {processando ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" /> Cancelando...
+                  </>
+                ) : (
+                  <>
+                    <XCircle className="w-5 h-5" />
+                    Cancelar inscrição
+                  </>
+                )}
+              </button>
+            )}
+
+            {mensagem && (
+              <p
+                className={`mt-3 text-sm ${
+                  mensagem.includes("sucesso")
+                    ? "text-green-600"
+                    : "text-red-600"
+                }`}
+              >
+                {mensagem}
+              </p>
+            )}
+          </div>
         </div>
       </JobDetailLayout>
     </DashboardLayout>
